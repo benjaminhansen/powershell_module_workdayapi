@@ -19,7 +19,11 @@ function ConvertFrom-WorkdayWorkerXml {
             Active                = $null
             WorkerDescriptor      = $null
             PreferredName         = $null
+            PreferredFirstName    = $null
+            PreferredMiddleName   = $null
+            PreferredLastName     = $null
             FirstName             = $null
+            MiddleName            = $null
             LastName              = $null
             WorkerType            = $null
             WorkerId              = $null
@@ -49,14 +53,18 @@ function ConvertFrom-WorkdayWorkerXml {
 
                 $referenceId = $x.Worker_Reference.ID | Where-Object {$_.type -ne 'WID'}
 
-                $o.WorkerWid        = $x.Worker_Reference.ID | Where-Object {$_.type -eq 'WID'} | Select-Object -ExpandProperty '#text'
-                $o.WorkerDescriptor = $x.Worker_Descriptor
-                $o.PreferredName    = $x.Worker_Data.Personal_Data.Name_Data.Preferred_Name_Data.Name_Detail_Data.Formatted_Name
-                $o.FirstName        = $x.Worker_Data.Personal_Data.Name_Data.Preferred_Name_Data.Name_Detail_Data.First_Name
-                $o.LastName         = $x.Worker_Data.Personal_Data.Name_Data.Preferred_Name_Data.Name_Detail_Data.Last_Name
-                $o.WorkerType       = $referenceId.type
-                $o.WorkerId         = $referenceId.'#text'
-                $o.XML              = [XML]$x.OuterXml
+                $o.WorkerWid            = $x.Worker_Reference.ID | Where-Object {$_.type -eq 'WID'} | Select-Object -ExpandProperty '#text'
+                $o.WorkerDescriptor     = $x.Worker_Descriptor
+                $o.PreferredName        = $x.Worker_Data.Personal_Data.Name_Data.Preferred_Name_Data.Name_Detail_Data.Formatted_Name
+                $o.PreferredLastName    = $x.Worker_Data.Personal_Data.Name_Data.Preferred_Name_Data.Name_Detail_Data.Last_Name
+                $o.PreferredFirstName   = $x.Worker_Data.Personal_Data.Name_Data.Preferred_Name_Data.Name_Detail_Data.First_Name
+                $o.PrefferedMiddleName  = $x.Worker_Data.Personal_Data.Name_Data.Preferred_Name_Data.Name_Detail_Data.Middle_Name
+                $o.FirstName            = $x.Worker_Data.Personal_Data.Name_Data.Legal_Name_Data.Name_Detail_Data.First_Name
+                $o.MiddleName           = $x.Worker_Data.Personal_Data.Name_Data.Legal_Name_Data.Name_Detail_Data.Middle_Name
+                $o.LastName             = $x.Worker_Data.Personal_Data.Name_Data.Legal_Name_Data.Name_Detail_Data.Last_Name
+                $o.WorkerType           = $referenceId.type
+                $o.WorkerId             = $referenceId.'#text'
+                $o.XML                  = [XML]$x.OuterXml
 
                 $o.Phone      = @(Get-WorkdayWorkerPhone -WorkerXml $x.OuterXml)
                 $o.Email      = @(Get-WorkdayWorkerEmail -WorkerXml $x.OuterXml)
