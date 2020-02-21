@@ -39,7 +39,7 @@ function ConvertFrom-WorkdayWorkerXml {
             WorkerTypeReference   = $null
             Manager               = $null
             Company               = $null
-            BusinessUnit          = $null
+            PayGroup              = $null
             Supervisory           = $null
             XML                   = $null
         }
@@ -87,9 +87,9 @@ function ConvertFrom-WorkdayWorkerXml {
                     $o.Manager = $workerJobData.Position_Data.Manager_as_of_last_detected_manager_change_Reference.ID |
                         Where-Object {$_.type -ne 'WID'} |
                             Select-Object @{Name='WorkerType';Expression={$_.type}}, @{Name='WorkerID';Expression={$_.'#text'}}
-                    $o.Company = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "COMPANY"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
-                    $o.BusinessUnit = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "BUSINESS_UNIT"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
-                    $o.Supervisory = $x.SelectNodes('./wd:Worker/wd:Worker_Data/wd:Organization_Data/wd:Worker_Organization_Data/wd:Organization_Data[translate(string(wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID"]),"abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ")="SUPERVISORY"]/wd:Organization_Name', $NM)
+                    $o.Company = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Company"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
+                    $o.PayGroup = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Pay_Group"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
+                    $o.Supervisory = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Supervisory"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
                 }
 
                 Write-Output $o
