@@ -67,7 +67,7 @@ function ConvertFrom-WorkdayWorkerXml {
                 $o.WorkerId             = $referenceId.'#text'
                 $o.XML                  = [XML]$x.OuterXml
 
-                $o.Department           = $x.Worker_Data.Organization_Data.Worker_Organization_Data.Organization_Data
+                $o.Department           = $x.SelectSingleNode('./wd:Worker/wd:Worker_Data/wd:Organization_Data/wd:Worker_Organization_Data/wd:Organization_Data[translate(string(wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID"]),"abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ")="SUPERVISORY"]/wd:Organization_Name', $NM)
 
                 $o.Phone      = @(Get-WorkdayWorkerPhone -WorkerXml $x.OuterXml)
                 $o.Email      = @(Get-WorkdayWorkerEmail -WorkerXml $x.OuterXml)
