@@ -41,7 +41,6 @@ function ConvertFrom-WorkdayWorkerXml {
             Company               = $null
             BusinessUnit          = $null
             Supervisory           = $null
-            Department            = $null
             XML                   = $null
         }
         $WorkerObjectTemplate.PsObject.TypeNames.Insert(0, "Workday.Worker")
@@ -90,7 +89,7 @@ function ConvertFrom-WorkdayWorkerXml {
                             Select-Object @{Name='WorkerType';Expression={$_.type}}, @{Name='WorkerID';Expression={$_.'#text'}}
                     $o.Company = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "COMPANY"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
                     $o.BusinessUnit = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "BUSINESS_UNIT"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
-                    $o.Supervisory = $x.SelectNodes('./wd:Worker/wd:Worker_Data/wd:Organization_Data/wd:Worker_Organization_Data/wd:Organization_Data[translate(string(wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID"]),"abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ")="SUPERVISORY"]/wd:Organization_Name', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
+                    $o.Supervisory = $x.SelectNodes('./wd:Worker/wd:Worker_Data/wd:Organization_Data/wd:Worker_Organization_Data/wd:Organization_Data[translate(string(wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID"]),"abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ")="SUPERVISORY"]/wd:Organization_Name', $NM)
                 }
 
                 Write-Output $o
