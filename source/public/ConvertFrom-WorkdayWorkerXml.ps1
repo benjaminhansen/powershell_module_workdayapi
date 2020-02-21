@@ -41,6 +41,7 @@ function ConvertFrom-WorkdayWorkerXml {
             Company               = $null
             BusinessUnit          = $null
             Supervisory           = $null
+            Department            = $null
             XML                   = $null
         }
         $WorkerObjectTemplate.PsObject.TypeNames.Insert(0, "Workday.Worker")
@@ -65,6 +66,8 @@ function ConvertFrom-WorkdayWorkerXml {
                 $o.WorkerType           = $referenceId.type
                 $o.WorkerId             = $referenceId.'#text'
                 $o.XML                  = [XML]$x.OuterXml
+
+                $o.Department           = $x.Worker_Data.Organization_Data.Worker_Organization_Data.Organization_Data
 
                 $o.Phone      = @(Get-WorkdayWorkerPhone -WorkerXml $x.OuterXml)
                 $o.Email      = @(Get-WorkdayWorkerEmail -WorkerXml $x.OuterXml)
