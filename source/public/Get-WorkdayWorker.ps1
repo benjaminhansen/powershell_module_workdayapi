@@ -65,7 +65,6 @@ Get-WorkdayWorker -WorkerId 123 -IncludePersonal
         [switch]$IncludePersonal,
         [switch]$IncludeWork,
         [switch]$IncludeDocuments,
-		[switch]$IncludeAccountData,
         [DateTime]$AsOfEntryDateTime = (Get-Date),
         # Outputs raw XML, rather than a custom object.
         [switch]$Passthru,
@@ -132,6 +131,7 @@ Get-WorkdayWorker -WorkerId 123 -IncludePersonal
             $request.Get_Workers_Request.Response_Group.Include_Roles = 'true'
 			$request.Get_Workers_Request.Response_Group.Include_Management_Chain_Data = 'true'
 			$request.Get_Workers_Request.Response_Group.Include_Photo = 'true'
+			$request.Get_Workers_Request.Response_Group.Include_Account_Provisioning = 'true'
         }
 
         if ($IncludeDocuments) {
@@ -141,10 +141,6 @@ Get-WorkdayWorker -WorkerId 123 -IncludePersonal
         if ($IncludeInactive) {
             $request.Get_Workers_Request.Request_Criteria.Exclude_Inactive_Workers = 'false'
         }
-
-		if ($IncludeAccountData) {
-			$request.Get_Workers_Request.Response_Group.Include_Account_Provisioning = 'true'
-		}
 
         $more = $true
         $nextPage = 0
