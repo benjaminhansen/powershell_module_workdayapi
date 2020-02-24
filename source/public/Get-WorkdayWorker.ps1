@@ -99,6 +99,7 @@ Get-WorkdayWorker -WorkerId 123 -IncludePersonal
     <bsvc:Include_Organizations>false</bsvc:Include_Organizations>
     <bsvc:Include_Roles>false</bsvc:Include_Roles>
     <bsvc:Include_Worker_Documents>false</bsvc:Include_Worker_Documents>
+	<bsvc:Include_Management_Chain_Data>false</bsvc:Include_Management_Chain_Data>
   </bsvc:Response_Group>
 </bsvc:Get_Workers_Request>
 '@
@@ -126,6 +127,7 @@ Get-WorkdayWorker -WorkerId 123 -IncludePersonal
             $request.Get_Workers_Request.Response_Group.Include_Compensation = 'true'
             $request.Get_Workers_Request.Response_Group.Include_Organizations = 'true'
             $request.Get_Workers_Request.Response_Group.Include_Roles = 'true'
+			$request.Get_Workers_Request.Response_Group.Include_Management_Chain_Data = 'true'
         }
 
         if ($IncludeDocuments) {
