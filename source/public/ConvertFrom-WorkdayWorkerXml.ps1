@@ -85,7 +85,7 @@ function ConvertFrom-WorkdayWorkerXml {
                     $manager = $workerJobData.Position_Data.Manager_as_of_last_detected_manager_change_Reference.ID |
                         Where-Object {$_.type -ne 'WID'} |
                             Select-Object @{Name='WorkerType';Expression={$_.type}}, @{Name='WorkerID';Expression={$_.'#text'}}
-                    $o.Manager = @(Get-WorkdayWorker -WorkerId $manager.WorkerID -WorkerType WID -IncludeWork -IncludePersonal)
+                    $o.Manager = @(Get-WorkdayWorker -WorkerId $manager.WorkerID -WorkerType Employee_ID -IncludeWork -IncludePersonal)
                     $o.Company = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Company"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
                     $o.PayGroup = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Pay_Group"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
                     $o.Supervisory = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Supervisory"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
