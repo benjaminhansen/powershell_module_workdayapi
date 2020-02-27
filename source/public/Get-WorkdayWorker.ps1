@@ -78,7 +78,7 @@ Get-WorkdayWorker -WorkerId 123 -IncludePersonal
 
     process {
     	$request = [xml]@'
-<bsvc:Get_Workers_Request bsvc:version="v30.0" xmlns:bsvc="urn:com.workday/bsvc">
+<bsvc:Get_Workers_Request bsvc:version="v33.2" xmlns:bsvc="urn:com.workday/bsvc">
   <bsvc:Request_References bsvc:Skip_Non_Existing_Instances="false">
 	<bsvc:Worker_Reference>
 		<bsvc:ID bsvc:type="Employee_ID">?EmployeeId?</bsvc:ID>
