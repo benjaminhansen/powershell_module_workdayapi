@@ -74,16 +74,6 @@ This simple Powershell Module has been written to fulfill my employer's Workday 
     Update-WorkdayWorkerPhone   Updates a Worker's phone number in Workday, only if it is different.
 
 
-## Installation ##
-
-The only dependency is Powershell version 4.
-
-This module has been published to the Powershell Gallery at https://www.powershellgallery.com/packages/WorkdayApi/ .
-
-To install run the following Powershell command:
-
-    Install-Module -Name WorkdayApi
-
 ## Fine Print ##
 Please use with caution. This module could cause baldness, could warp time and space, could kill your puppy or, could do nothing at all. I am sharing what I am using as a starting point for a community developed solution.
 
