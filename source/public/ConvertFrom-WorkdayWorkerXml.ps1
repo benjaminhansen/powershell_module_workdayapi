@@ -41,6 +41,7 @@ function ConvertFrom-WorkdayWorkerXml {
             PayGroup              = $null
             Supervisory           = $null
             XML                   = $null
+            Worker_Status         = $null
         }
         $WorkerObjectTemplate.PsObject.TypeNames.Insert(0, "Workday.Worker")
     }
@@ -75,6 +76,7 @@ function ConvertFrom-WorkdayWorkerXml {
                 $workerEmploymentData = $x.SelectSingleNode('./wd:Worker_Data/wd:Employment_Data', $NM)
                 if ($null -ne $workerEmploymentData) {
                     $o.Active = $workerEmploymentData.Worker_Status_Data.Active -eq '1'
+                    $o.Worker_Status = $workerEmploymentData.Worker_Status_Data
                 }
                 $workerJobData = $x.SelectSingleNode('./wd:Worker_Data/wd:Employment_Data/wd:Worker_Job_Data', $NM)
                 if ($null -ne $workerJobData) {
