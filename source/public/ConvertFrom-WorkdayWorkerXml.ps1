@@ -113,7 +113,7 @@ function ConvertFrom-WorkdayWorkerXml {
                 }
 
                 if($null -ne $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM)) {
-                    $o.Universal_ID = $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM)
+                    $o.Universal_ID = $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM).Value
                 }
 
                 Write-Output $o
