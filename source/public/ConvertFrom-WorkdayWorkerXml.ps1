@@ -42,6 +42,14 @@ function ConvertFrom-WorkdayWorkerXml {
             Supervisory           = $null
             XML                   = $null
             Worker_Status         = $null
+            Primary_Job           = $null
+            Universal_ID          = $null
+            Address_Data_Raw      = $null
+            Address_Zip           = $null
+            Address_City          = $null
+            Address_State         = $null
+            Address_Line_1        = $null
+            Address_Line_2        = $null
         }
         $WorkerObjectTemplate.PsObject.TypeNames.Insert(0, "Workday.Worker")
     }
@@ -66,11 +74,11 @@ function ConvertFrom-WorkdayWorkerXml {
                 $o.WorkerId             = $referenceId.'#text'
                 $o.XML                  = [XML]$x.OuterXml
 
-                $o.Phone      = @(Get-WorkdayWorkerPhone -WorkerXml $x.OuterXml)
-                $o.Email      = @(Get-WorkdayWorkerEmail -WorkerXml $x.OuterXml)
-                $o.NationalId = @(Get-WorkdayWorkerNationalId -WorkerXml $x.OuterXml)
-                $o.OtherId    = @(Get-WorkdayWorkerOtherId -WorkerXml $x.OuterXml)
-                $o.UserId     = $x.Worker_Data.User_ID
+                $o.Phone        = @(Get-WorkdayWorkerPhone -WorkerXml $x.OuterXml)
+                $o.Email        = @(Get-WorkdayWorkerEmail -WorkerXml $x.OuterXml)
+                $o.NationalId   = @(Get-WorkdayWorkerNationalId -WorkerXml $x.OuterXml)
+                $o.OtherId      = @(Get-WorkdayWorkerOtherId -WorkerXml $x.OuterXml)
+                $o.UserId       = $x.Worker_Data.User_ID
 
                 # The methods SelectNodes and SelectSingleNode have access to the entire XML document and require anchoring with "./" to work as expected.
                 $workerEmploymentData = $x.SelectSingleNode('./wd:Worker_Data/wd:Employment_Data', $NM)
@@ -78,6 +86,7 @@ function ConvertFrom-WorkdayWorkerXml {
                     $o.Active = $workerEmploymentData.Worker_Status_Data.Active -eq '1'
                     $o.Worker_Status = $workerEmploymentData.Worker_Status_Data
                 }
+
                 $workerJobData = $x.SelectSingleNode('./wd:Worker_Data/wd:Employment_Data/wd:Worker_Job_Data', $NM)
                 if ($null -ne $workerJobData) {
                     $o.BusinessTitle = $workerJobData.Position_Data.Business_Title
@@ -88,9 +97,23 @@ function ConvertFrom-WorkdayWorkerXml {
                         Where-Object {$_.type -ne 'WID'} |
                             Select-Object @{Name='WorkerType';Expression={$_.type}}, @{Name='WorkerID';Expression={$_.'#text'}}
                     $o.Manager = $manager
+
                     $o.Company = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Company"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
                     $o.PayGroup = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Pay_Group"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
                     $o.Supervisory = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Supervisory"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
+
+                    $o.Primary_Job = [boolean]$workerJobData.SelectSingleNode('./@wd:Primary_Job', $NM).'#text'
+
+                    $o.Address_Data_Raw = $workerJobData.SelectNodes('./wd:Position_Data/wd:Business_Site_Summary_Data/wd:Address_Data', $NM)
+                    $o.Address_Zip = $o.Address_Data_Raw.Postal_Code
+                    $o.Address_City = $o.Address_Data_Raw.Municipality
+                    $o.Address_State = $o.Address_Data_Raw.Country_Region_Descriptor
+                    $o.Address_Line_1 = $o.Address_Data_Raw.Address_Line_Data[0].'#text'
+                    $o.Address_Line_2 = $o.Address_Data_Raw.Address_Line_Data[1].'#text'
+                }
+
+                if($null -ne $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM)) {
+                    $o.Universal_ID = $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM)
                 }
 
                 Write-Output $o

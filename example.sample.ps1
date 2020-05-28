@@ -15,7 +15,7 @@ $api_integrations_endpoint = "$api_endpoint/Integrations/$api_version"
 $api_staffing_endpoint = "$api_endpoint/Staffing/$api_version"
 
 # api authentication options
-$isu_username = ""
+$isu_username = "{username}@$tenant"
 $isu_password = ""
 $password = ConvertTo-SecureString $isu_password -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential -ArgumentList ($isu_username, $password)
@@ -31,5 +31,5 @@ Save-WorkdayConfiguration
 # get workers
 $workers = Get-WorkdayWorker -IncludeWork -IncludePersonal
 
-# output and format as a table 
+# output and format as a table
 $workers | Format-Table
