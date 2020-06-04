@@ -40,16 +40,16 @@ function ConvertFrom-WorkdayWorkerXml {
             Company               = $null
             PayGroup              = $null
             Supervisory           = $null
-            XML                   = $null
-            Worker_Status         = $null
-            Primary_Job           = $null
-            Universal_ID          = $null
-            Address_Data_Raw      = $null
-            Address_Zip           = $null
-            Address_City          = $null
-            Address_State         = $null
-            Address_Line_1        = $null
-            Address_Line_2        = $null
+            RawXML                = $null
+            WorkerStatus          = $null
+            PrimaryJob            = $null
+            UniversalId           = $null
+            RawAddressData        = $null
+            AddressZip            = $null
+            AddressCity           = $null
+            AddressState          = $null
+            AddressLine1          = $null
+            AddressLine2          = $null
         }
         $WorkerObjectTemplate.PsObject.TypeNames.Insert(0, "Workday.Worker")
     }
@@ -72,7 +72,7 @@ function ConvertFrom-WorkdayWorkerXml {
                 $o.LastName             = $x.Worker_Data.Personal_Data.Name_Data.Legal_Name_Data.Name_Detail_Data.Last_Name
                 $o.WorkerType           = $referenceId.type
                 $o.WorkerId             = $referenceId.'#text'
-                $o.XML                  = [XML]$x.OuterXml
+                $o.RawXML               = [XML]$x.OuterXml
 
                 $o.Phone        = @(Get-WorkdayWorkerPhone -WorkerXml $x.OuterXml)
                 $o.Email        = @(Get-WorkdayWorkerEmail -WorkerXml $x.OuterXml)
@@ -84,7 +84,7 @@ function ConvertFrom-WorkdayWorkerXml {
                 $workerEmploymentData = $x.SelectSingleNode('./wd:Worker_Data/wd:Employment_Data', $NM)
                 if ($null -ne $workerEmploymentData) {
                     $o.Active = $workerEmploymentData.Worker_Status_Data.Active -eq '1'
-                    $o.Worker_Status = $workerEmploymentData.Worker_Status_Data
+                    $o.WorkerStatus = $workerEmploymentData.Worker_Status_Data
                 }
 
                 $workerJobData = $x.SelectSingleNode('./wd:Worker_Data/wd:Employment_Data/wd:Worker_Job_Data', $NM)
@@ -102,18 +102,18 @@ function ConvertFrom-WorkdayWorkerXml {
                     $o.PayGroup = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Pay_Group"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
                     $o.Supervisory = $workerJobData.SelectNodes('./wd:Position_Organizations_Data/wd:Position_Organization_Data/wd:Organization_Data[wd:Organization_Type_Reference/wd:ID[@wd:type="Organization_Type_ID" and . = "Supervisory"]]', $NM) | Select-Object -ExpandProperty Organization_Name -First 1
 
-                    $o.Primary_Job = [boolean]$workerJobData.SelectSingleNode('./@wd:Primary_Job', $NM).'#text'
+                    $o.PrimaryJob = [boolean]$workerJobData.SelectSingleNode('./@wd:Primary_Job', $NM).'#text'
 
-                    $o.Address_Data_Raw = $workerJobData.SelectNodes('./wd:Position_Data/wd:Business_Site_Summary_Data/wd:Address_Data', $NM)
-                    $o.Address_Zip = $o.Address_Data_Raw.Postal_Code
-                    $o.Address_City = $o.Address_Data_Raw.Municipality
-                    $o.Address_State = $o.Address_Data_Raw.Country_Region_Descriptor
-                    $o.Address_Line_1 = $o.Address_Data_Raw.Address_Line_Data[0].'#text'
-                    $o.Address_Line_2 = $o.Address_Data_Raw.Address_Line_Data[1].'#text'
+                    $o.RawAddressData = $workerJobData.SelectNodes('./wd:Position_Data/wd:Business_Site_Summary_Data/wd:Address_Data', $NM)
+                    $o.AddressZip = $o.RawAddressData.Postal_Code
+                    $o.AddressCity = $o.RawAddressData.Municipality
+                    $o.AddressState = $o.RawAddressData.Country_Region_Descriptor
+                    $o.AddressLine1 = $o.RawAddressData.Address_Line_Data[0].'#text'
+                    $o.AddressLine2 = $o.RawAddressData.Address_Line_Data[1].'#text'
                 }
 
                 if($null -ne $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM)) {
-                    $o.Universal_ID = $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM).Value
+                    $o.UniversalId = $x.SelectSingleNode('./wd:Universal_Identifier_Reference/wd:ID[@wd:type="Universal_Identifier_ID"]/text()', $NM).Value
                 }
 
                 Write-Output $o
